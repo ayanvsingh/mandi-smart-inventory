@@ -2,6 +2,8 @@
 
 **Mandi** is a mobile-first inventory management and B2B ordering prototype designed for small kirana shop owners in India. It aims to simplify stock monitoring, identify products that need replenishment, discover suppliers by city, and track orders through a simple, accessible interface.
 
+Prototype: https://ayanvsingh.github.io/mandi-smart-inventory/
+
 ## Problem Statement
 
 Small kirana stores often rely on manual stock checks and informal coordination with suppliers. This can make it difficult to identify low-stock products early, maintain an organized inventory, and replenish products on time.
