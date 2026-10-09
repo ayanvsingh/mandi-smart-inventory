@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mandi — Kirana Inventory Prototype</title>
+<style>
+:root{--g:#8b0038;--g2:#f8e8ef;--bg:#fbf7f8;--card:#fff;--text:#26131b;--muted:#796a70;--line:#eedfe5;--red:#c92f4c;--orange:#c77b25;--shadow:0 10px 28px #4b092018}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(135deg,#edf8f1,#f6f7f6);color:var(--text);min-height:100vh}
+body.dark{--bg:#10060b;--card:#1d0c14;--text:#fff4f7;--muted:#c1aab3;--line:#482033;--g2:#351322;background:#000} body.dark .stage{background:#000} body.dark .phone{border-color:#333;box-shadow:0 25px 70px #000} body.dark .alert{background:#35111d;border-color:#68223a} body.dark .alert b{color:#ff9db9} body.dark .alert small{color:#e0b5c3} body.dark .critical{background:#4a1528;color:#ffb3c8} body.dark .healthy{background:#321827;color:#f0bdd1} body.dark .low{background:#392617;color:#ffd29a}
+.stage{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:22px}
+.phone{width:390px;height:820px;background:var(--bg);border:10px solid #171b18;border-radius:42px;box-shadow:0 25px 70px #1326193b;overflow:hidden;position:relative}
+.screen{height:100%;overflow:auto;padding:20px 18px 92px;scrollbar-width:none}.screen::-webkit-scrollbar{display:none}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.brand{font-size:27px;font-weight:850;color:var(--g);letter-spacing:-.8px}.avatar{width:38px;height:38px;border-radius:50%;background:var(--g);color:white;display:grid;place-items:center;font-weight:800}
+.hello{font-size:13px;color:var(--muted);margin-top:2px}.title{font-size:22px;font-weight:800;margin:8px 0 14px}
+.alert{background:#fff1ef;border:1px solid #ffd5d0;border-radius:16px;padding:13px 14px;display:flex;gap:10px;margin-bottom:14px}.alert b{display:block;color:#a72d27;font-size:14px}.alert small{color:#9a5c57}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}.stat{padding:14px}.stat .n{font-size:25px;font-weight:850}.stat small{color:var(--muted)}
+.section{display:flex;align-items:center;justify-content:space-between;margin:20px 2px 10px}.section b{font-size:16px}.link{color:var(--g);font-size:12px;font-weight:700}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;align-items:center;gap:11px;margin:9px 0}.ico{width:46px;height:46px;border-radius:13px;background:var(--g2);display:grid;place-items:center;font-size:24px}.grow{flex:1}.name{font-weight:750;font-size:14px}.sub{font-size:11px;color:var(--muted);margin-top:3px}.badge{font-size:10px;font-weight:800;padding:5px 7px;border-radius:20px}.critical{background:#fde8ed;color:#a10b3f}.low{background:#fff0df;color:#9b5b12}.healthy{background:#f3e7ed;color:#7c1741}
+.bar{height:6px;background:var(--line);border-radius:9px;margin-top:8px;overflow:hidden}.fill{height:100%;background:var(--g)}.fill.red{background:var(--red)}.fill.orange{background:var(--orange)}
+.btn{border:0;background:var(--g);color:white;border-radius:13px;padding:12px 15px;font-weight:800;cursor:pointer;box-shadow:0 5px 12px #79002c1a}.btn.full{width:100%;margin-top:10px}.btn.ghost{background:var(--g2);color:var(--g)}
+.search{width:100%;padding:13px 14px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:14px;outline:none}
+.qty{display:flex;align-items:center;gap:7px}.qbtn{border:0;background:var(--g2);color:var(--g);width:28px;height:28px;border-radius:8px;font-weight:900}
+.timeline{border-left:3px solid #cfead8;margin-left:11px;padding-left:18px}.step{position:relative;margin:0 0 25px}.step:before{content:"";position:absolute;left:-25px;top:2px;width:11px;height:11px;border-radius:50%;background:var(--g)}.step.muted:before{background:#cbd3cd}.step small{color:var(--muted)}
+.setting{display:flex;justify-content:space-between;align-items:center;padding:15px 2px;border-bottom:1px solid var(--line)}select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:7px}
+.switch{width:45px;height:25px;border-radius:30px;background:#cfd7d1;padding:3px;cursor:pointer}.switch.on{background:var(--g)}.knob{width:19px;height:19px;border-radius:50%;background:white;transition:.2s}.switch.on .knob{transform:translateX(20px)}
+.nav{position:absolute;bottom:0;left:0;right:0;height:76px;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:6px}.nav button{border:0;background:none;color:var(--muted);font-size:10px;cursor:pointer}.nav button span{display:block;font-size:21px;margin-bottom:3px}.nav button.active{color:var(--g);font-weight:800}
+.toast{position:absolute;left:22px;right:22px;bottom:90px;background:#17241b;color:white;padding:12px 14px;border-radius:13px;font-size:13px;display:none;box-shadow:var(--shadow)}
+.note{font-size:10px;color:var(--muted);text-align:center;margin-top:14px}.hero{background:linear-gradient(135deg,#690027,#a80a4d 65%,#cf477c);color:white;padding:18px;border-radius:19px;margin-bottom:14px;box-shadow:0 12px 25px #7b07301c}.hero small{opacity:.82}.hero .big{font-size:24px;font-weight:850;margin-top:5px}
+@media(max-height:850px){.phone{height:94vh}}
+
+/* Mandi burgundy visual refresh */
+.section .link{color:var(--g)}
+.nav button.active{color:var(--g)}
+.item,.stat,.card{transition:transform .16s ease, box-shadow .16s ease}
+.item:active,.stat:active{transform:scale(.99)}
+body.dark .ico{background:var(--g2)}
+body.dark .btn.ghost{background:var(--g2);color:#f2c6d7}
+</style>
+</head>
+<body>
+<div class="stage"><div class="phone"><main id="app" class="screen"></main><div class="toast" id="toast"></div>
+<nav class="nav" id="nav"></nav></div></div>
+<script>
+const products=[
+ {id:1,n:"Cooking Oil",cat:"Grocery",stock:24,sku:12,icon:"🫗",vendor:"Supplier A",eta:"ETA from supplier feed"},
+ {id:2,n:"Toor Dal",cat:"Pulses",stock:29,sku:18,icon:"🫘",vendor:"Supplier B",eta:"ETA from supplier feed"},
+ {id:3,n:"Biscuits",cat:"Snacks",stock:46,sku:32,icon:"🍪",vendor:"Supplier A",eta:"ETA from supplier feed"},
+ {id:4,n:"Detergent",cat:"Household",stock:67,sku:25,icon:"🧴",vendor:"Supplier C",eta:"ETA from supplier feed"},
+ {id:5,n:"Rice",cat:"Staples",stock:78,sku:48,icon:"🍚",vendor:"Supplier B",eta:"ETA from supplier feed"},
+ {id:6,n:"Wheat Flour",cat:"Staples",stock:34,sku:20,icon:"🌾",vendor:"Supplier B",eta:"ETA from supplier feed"},
+ {id:7,n:"Sugar",cat:"Staples",stock:58,sku:29,icon:"🧂",vendor:"Supplier B",eta:"ETA from supplier feed"},
+ {id:8,n:"Tea",cat:"Beverages",stock:27,sku:14,icon:"🍵",vendor:"Supplier A",eta:"ETA from supplier feed"},
+ {id:9,n:"Coffee",cat:"Beverages",stock:61,sku:21,icon:"☕",vendor:"Supplier A",eta:"ETA from supplier feed"},
+ {id:10,n:"Milk",cat:"Dairy",stock:22,sku:10,icon:"🥛",vendor:"Supplier D",eta:"ETA from supplier feed"},
+ {id:11,n:"Curd",cat:"Dairy",stock:41,sku:16,icon:"🥣",vendor:"Supplier D",eta:"ETA from supplier feed"},
+ {id:12,n:"Salt",cat:"Staples",stock:82,sku:44,icon:"🧂",vendor:"Supplier B",eta:"ETA from supplier feed"},
+ {id:13,n:"Noodles",cat:"Packaged Food",stock:31,sku:19,icon:"🍜",vendor:"Supplier A",eta:"ETA from supplier feed"},
+ {id:14,n:"Potato Chips",cat:"Snacks",stock:19,sku:9,icon:"🥔",vendor:"Supplier A",eta:"ETA from supplier feed"},
+ {id:15,n:"Soap",cat:"Personal Care",stock:72,sku:38,icon:"🧼",vendor:"Supplier C",eta:"ETA from supplier feed"},
+ {id:16,n:"Shampoo",cat:"Personal Care",stock:43,sku:22,icon:"🧴",vendor:"Supplier C",eta:"ETA from supplier feed"},
+ {id:17,n:"Toothpaste",cat:"Personal Care",stock:26,sku:13,icon:"🪥",vendor:"Supplier C",eta:"ETA from supplier feed"},
+ {id:18,n:"Soft Drinks",cat:"Beverages",stock:55,sku:35,icon:"🥤",vendor:"Supplier E",eta:"ETA from supplier feed"},
+ {id:19,n:"Bottled Water",cat:"Beverages",stock:76,sku:52,icon:"💧",vendor:"Supplier E",eta:"ETA from supplier feed"},
+ {id:20,n:"Spices",cat:"Grocery",stock:39,sku:24,icon:"🌶️",vendor:"Supplier B",eta:"ETA from supplier feed"},
+ {id:21,n:"Bread",cat:"Bakery",stock:28,sku:11,icon:"🍞",vendor:"Supplier D",eta:"ETA from supplier feed"},
+ {id:22,n:"Floor Cleaner",cat:"Household",stock:64,sku:27,icon:"🧹",vendor:"Supplier C",eta:"ETA from supplier feed"}
+];
+
+const vendorDirectory = {
+ "Chennai":[
+  {name:"Ecoo Basket B2B",address:"SF 215, Plot No. 120, Shop No. 5, Rajesh Garden, Main Road, Chettiyar Agaram, Vanagaram, Chennai, Tamil Nadu 600095",phone:"+91 93423 58226",categories:"FMCG, atta, rice, dals, beverages, biscuits",url:"https://www.ecoobasket.com/",note:"Chennai delivery; published delivery window 24–48 hours"},
+  {name:"Jai Enterprises",address:"No. 3 & 4, A.V.K Nagar, Nerkundram, near Koyambedu Electricity Office, Chennai, Tamil Nadu 600107",phone:"Use website contact form",categories:"Groceries, staples, spices, beverages, snacks, personal and home care",url:"https://jaienterpriseglobal.com/",note:"Contact supplier to confirm availability and delivery"},
+  {name:"Sri Kanniga Trading House",address:"Nos. 328/1B2, Kannapalayam Main Road, Avadi, Chennai, Tamil Nadu 600071",phone:"+91 93601 45211",categories:"FMCG and multi-category retail products",url:"https://www.srikanniga.com/contact.html",note:"Published order cutoff 1 PM; next-day delivery listed"}
+ ],
+ "Mumbai":[
+  {name:"Uttam Distributors",address:"Ground Floor, B/11, Kasturchand Premise CSL, M.C. Jawale Marg, opposite Kabutar Khana, Dadar West, Mumbai, Maharashtra 400028",phone:"+91 91375 88521",categories:"Dairy, FMCG, confectionery, foods and tea",url:"https://uttamdistributors.com/",note:"Confirm kirana account eligibility and delivery ETA"},
+  {name:"TJUK Trade Networks Pvt. Ltd.",address:"Plot No. 55, Hindustan Biologicals, Waman Patil Marg, off Ghatkopar–Mankhurd Link Road, Mumbai, Maharashtra 400043",phone:"022 6787 7777",categories:"Food distribution and retail supply",url:"https://www.tjukgroup.in/",note:"Contact supplier to confirm product list and delivery"}
+ ],
+ "Delhi":[
+  {name:"Delhi Consumer’s Co-operative Wholesale Store Ltd.",address:"Karampura Road, Moti Nagar, New Delhi",phone:"011 25102970 / 011 25165324",categories:"Consumer goods and wholesale supplies",url:"https://dccws.delhi.gov.in/",note:"Public cooperative wholesale store; confirm retail order process"}
+ ],
+ "Lucknow":[
+  {name:"SN Distributors",address:"Asti Road, BKT, Sitapur Road, Lucknow, Uttar Pradesh",phone:"+91 96512 89544 / +91 96515 39544 / +91 84233 73372",categories:"Snacks, grocery, bakery, packaged food, beverages and daily essentials",url:"https://sndistributors.in/",note:"Website describes delivery routes around Lucknow; confirm your pin code"},
+  {name:"Eugenics",address:"101-C, Govinda Building, Shahnazaf Road, Hazratganj, Lucknow, Uttar Pradesh 226001",phone:"+91 86010 97777",categories:"FMCG and food distribution",url:"https://www.eugenics.in/",note:"Contact to confirm kirana ordering and delivery"}
+ ],
+ "Bengaluru":[
+  {name:"ARB Group",address:"Bengaluru, Karnataka (confirm branch/warehouse address with supplier)",phone:"Use website contact details",categories:"FMCG distribution, including food, personal care and household brands",url:"https://www.arbgroup.co.in/",note:"Public website describes distributor operations in Bengaluru; verify exact dispatch location"}
+ ],
+ "Coimbatore":[
+  {name:"Sri Kanniga Trading House",address:"30/3, Amman Kovil Street, Venkitapuram, GCT Post, Coimbatore, Tamil Nadu 641013",phone:"+91 93601 45211",categories:"FMCG and multi-category retail products",url:"https://www.srikanniga.com/contact.html",note:"Published cutoff 12 PM; same-day dispatch listed"},
+  {name:"Siva Group of Companies",address:"Coimbatore, Tamil Nadu (contact company to confirm warehouse address)",phone:"Use website contact details",categories:"FMCG stockist and distribution",url:"https://www.sivagroups.co.in/",note:"Company website describes warehouse operations in Chennai and Coimbatore"}
+ ],
+ "Hyderabad":[
+  {name:"No verified vendor added yet",address:"Choose another city or add a supplier after verification",phone:"—",categories:"—",url:"",note:"Vendor details should be verified before ordering"}
+ ],
+ "Kolkata":[
+  {name:"No verified vendor added yet",address:"Choose another city or add a supplier after verification",phone:"—",categories:"—",url:"",note:"Vendor details should be verified before ordering"}
+ ],
+ "Pune":[
+  {name:"No verified vendor added yet",address:"Choose another city or add a supplier after verification",phone:"—",categories:"—",url:"",note:"Vendor details should be verified before ordering"}
+ ],
+ "Ahmedabad":[
+  {name:"No verified vendor added yet",address:"Choose another city or add a supplier after verification",phone:"—",categories:"—",url:"",note:"Vendor details should be verified before ordering"}
+ ],
+ "Jaipur":[
+  {name:"No verified vendor added yet",address:"Choose another city or add a supplier after verification",phone:"—",categories:"—",url:"",note:"Vendor details should be verified before ordering"}
+ ]
+};
+
+let page="home", cart={}, orderPlaced=false, orderDate=null, selectedCity="Chennai", selectedVendor=null;
+function fmtDate(d){return new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric"}).format(d)}
+function plusDays(d,n){let x=new Date(d);x.setDate(x.getDate()+n);return x}
+const labels={home:["⌂","Home"],reorder:["↻","Reorder"],orders:["▣","Orders"],inventory:["▦","Inventory"],more:["☰","More"]};
+function status(p){return p.stock<=30?["Critical","critical","red"]:p.stock<=45?["Low","low","orange"]:["Healthy","healthy",""]}
+function header(sub){return `<div class="top"><div><div class="brand">Mandi</div><div class="hello">${sub||"Smart stock. Simple ordering."}</div></div><div class="avatar">M</div></div>`}
+function item(p,actions=""){let s=status(p);return `<div class="item"><div class="ico">${p.icon}</div><div class="grow"><div class="name">${p.n}</div><div class="sub">${p.cat} · <b>${p.sku} SKUs in stock</b> · ${p.stock}% of target stock</div><div class="bar"><div class="fill ${s[2]}" style="width:${p.stock}%"></div></div></div><span class="badge ${s[1]}">${s[0]}</span>${actions}</div>`}
+function home(){let crit=products.filter(p=>p.stock<=30);return header()+`<div class="alert"><div>⚠️</div><div><b>${crit.length} items need attention</b><small>Stock is at or below the 30% reorder threshold.</small></div></div>
+<div class="grid"><div class="stat"><div class="n">${products.length}</div><small>Product lines tracked</small></div><div class="stat"><div class="n">${products.reduce((a,p)=>a+p.sku,0)}</div><small>Total SKU units in stock</small></div><div class="stat"><div class="n">${crit.length}</div><small>Critical product lines</small></div><div class="stat"><div class="n">30%</div><small>Reorder threshold</small></div></div>
+<div class="section"><b>Needs restocking</b><span class="link" onclick="go('reorder')">Reorder →</span></div>${crit.map(p=>item(p)).join("")}
+<div class="section"><b>All products (${products.length})</b><span class="link" onclick="go('inventory')">Manage inventory</span></div>${products.map(p=>item(p)).join("")}
+<div class="note">Prototype uses illustrative/demo product and supplier data.</div>`}
+function reorder(){let crit=products.filter(p=>p.stock<=30);return header("Review critical stock before ordering")+`<div class="title">Reorder</div>
+<div class="hero"><small>Reorder rule</small><div class="big">≤ 30% stock</div><small>You stay in control. Mandi alerts you; it does not auto-purchase.</small></div>
+${crit.map(p=>`<div class="card" style="padding:14px;margin:10px 0"><div style="display:flex;gap:10px;align-items:center"><div class="ico">${p.icon}</div><div class="grow"><div class="name">${p.n}</div><div class="sub">${p.vendor} · ${p.eta}</div></div><span class="badge critical">${p.stock}%</span></div><div class="setting"><span class="sub">Order quantity</span><div class="qty"><button class="qbtn" onclick="qty(${p.id},-1)">−</button><b id="q${p.id}">${cart[p.id]||1}</b><button class="qbtn" onclick="qty(${p.id},1)">+</button></div></div></div>`).join("")}
+<button class="btn full" onclick="place()">Place demo order</button>
+<div class="section"><b>Find a supplier</b><span class="link">City-wise directory</span></div>
+<div class="sub" style="margin:0 2px 8px">Choose the city where you want to source products.</div>
+<select id="vendorCity" style="width:100%;padding:12px;margin-bottom:10px" onchange="changeVendorCity(this.value)">
+${["Chennai","Mumbai","Lucknow","Delhi","Bengaluru","Coimbatore","Hyderabad","Kolkata","Pune","Ahmedabad","Jaipur"].map(c=>`<option ${c===selectedCity?"selected":""}>${c}</option>`).join("")}
+</select>
+<div id="vendorList">${renderVendorCards(selectedCity)}</div>
+<div class="note">Vendor details are based on publicly listed business information where available. Confirm service area, prices, stock and delivery before ordering.</div>`}
+
+function renderVendorCards(city){
+ const list=vendorDirectory[city]||[];
+ return list.map((v,i)=>`<div class="card" style="padding:13px;margin:9px 0">
+ <div style="display:flex;gap:9px;align-items:flex-start"><div class="ico">🏪</div><div class="grow">
+ <div class="name">${v.name}</div><div class="sub">${v.categories}</div></div></div>
+ <div class="sub" style="margin-top:10px;line-height:1.5">📍 ${v.address}</div>
+ <div class="sub" style="margin-top:6px;line-height:1.5">☎ ${v.phone}</div>
+ <div class="sub" style="margin-top:6px;line-height:1.5">🚚 ${v.note}</div>
+ <div style="display:flex;gap:8px;margin-top:11px;flex-wrap:wrap">
+ ${v.url?`<button class="btn ghost" onclick="window.open('${v.url}','_blank')">View supplier</button>`:""}
+ ${v.url?`<button class="btn" onclick="orderFromVendor('${city}',${i})">Order from vendor</button>`:""}
+ </div></div>`).join("");
+}
+function changeVendorCity(city){selectedCity=city;document.getElementById("vendorList").innerHTML=renderVendorCards(city)}
+function orderFromVendor(city,index){
+ const v=vendorDirectory[city][index];
+ if(!v.url || v.name.startsWith("No verified")){toast("No verified supplier available for this city yet.");return}
+ selectedVendor=v; selectedCity=city; orderPlaced=true;orderDate=new Date();
+ toast("Demo order initiated with "+v.name);
+ setTimeout(()=>go("orders"),500);
+}
+
+function orders(){let d=orderDate||new Date();return header("Track replenishment orders")+`<div class="title">Order tracking</div>${orderPlaced?`
+<div class="card" style="padding:16px"><div style="display:flex;justify-content:space-between"><b>Demo replenishment order</b><span class="badge healthy">Demo order</span></div>
+<div class="sub" style="margin:6px 0 8px">Critical inventory replenishment</div>
+<div class="sub" style="margin-bottom:8px"><b>Placed:</b> ${fmtDate(d)} · <b>Expected delivery:</b> ${fmtDate(plusDays(d,2))}</div>${selectedVendor?`<div class="sub" style="margin-bottom:18px"><b>Supplier:</b> ${selectedVendor.name} · ${selectedCity}</div>`:""}
+<div class="timeline">
+<div class="step"><b>Order placed</b><br><small>${fmtDate(d)} · Submitted by store</small></div>
+<div class="step"><b>Supplier confirmation</b><br><small>${fmtDate(d)} · Simulated confirmation</small></div>
+<div class="step muted"><b>In transit</b><br><small>${fmtDate(plusDays(d,1))} · Illustrative scheduled milestone</small></div>
+<div class="step muted"><b>Expected delivery</b><br><small>${fmtDate(plusDays(d,2))} · Illustrative date for prototype</small></div>
+</div></div>`:`<div class="card" style="padding:28px;text-align:center"><div style="font-size:42px">📦</div><h3>No active orders</h3><div class="sub">Place a demo reorder to see dated tracking milestones.</div><button class="btn" style="margin-top:15px" onclick="go('reorder')">Go to Reorder</button></div>`}`}
+function inventory(){return header("Scan, search and manage products")+`<div class="title">Inventory</div><input class="search" id="search" placeholder="Search products or categories" oninput="filterItems()"><button class="btn full" onclick="scan()">▣ Scan barcode / add product</button><div id="plist">${products.map(p=>item(p)).join("")}</div><div class="note">Barcode action is simulated in this prototype.</div>`}
+function more(){return header("Store preferences")+`<div class="title">Settings & Help</div><div class="card" style="padding:4px 14px">
+<div class="setting"><div><b>Language</b><div class="sub">App display language</div></div><select onchange="toast('Language preference saved for prototype')"><option>English</option><option>हिन्दी</option><option>தமிழ்</option><option>తెలుగు</option><option>বাংলা</option><option>मराठी</option><option>ગુજરાતી</option><option>ಕನ್ನಡ</option><option>മലയാളം</option><option>ਪੰਜਾਬੀ</option></select></div>
+<div class="setting"><div><b>Dark mode</b><div class="sub">Reduce glare in low light</div></div><div class="switch" id="sw" onclick="toggleDark()"><div class="knob"></div></div></div>
+<div class="setting"><div><b>Reorder threshold</b><div class="sub">Current prototype rule</div></div><b>30%</b></div>
+<div class="setting"><div><b>Notifications</b><div class="sub">Critical stock alerts</div></div><span class="badge healthy">On</span></div>
+<div class="setting"><div><b>Help & Support</b><div class="sub">How Mandi inventory works</div></div><span>›</span></div>
+<div class="setting"><div><b>Store profile</b><div class="sub">Login and shop settings</div></div><span>›</span></div></div>`}
+function render(){app.innerHTML=({home:home,reorder:reorder,orders:orders,inventory:inventory,more:more}[page])();nav.innerHTML=Object.entries(labels).map(([k,v])=>`<button class="${page==k?'active':''}" onclick="go('${k}')"><span>${v[0]}</span>${v[1]}</button>`).join(""); if(document.body.classList.contains("dark")&&document.getElementById("sw"))document.getElementById("sw").classList.add("on")}
+function go(p){page=p;render()} function qty(id,d){cart[id]=Math.max(1,(cart[id]||1)+d);document.getElementById("q"+id).textContent=cart[id]}
+function place(){orderPlaced=true;orderDate=new Date();toast("Demo order placed. Open Orders to track it.");setTimeout(()=>go("orders"),650)}
+function toast(t){let x=document.getElementById("toast");x.textContent=t;x.style.display="block";setTimeout(()=>x.style.display="none",2200)}
+function scan(){toast("Barcode scanner simulated — product repository ready to update.")}
+function filterItems(){let q=document.getElementById("search").value.toLowerCase();document.getElementById("plist").innerHTML=products.filter(p=>(p.n+" "+p.cat).toLowerCase().includes(q)).map(p=>item(p)).join("")}
+function toggleDark(){document.body.classList.toggle("dark");document.getElementById("sw").classList.toggle("on")}
+render();
+</script></body></html>
