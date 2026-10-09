@@ -2,6 +2,8 @@
 
 Mandi is a smart inventory management and B2B ordering app designed to help kirana shop owners manage stock, identify replenishment needs, discover suppliers, and track orders through a simple, mobile-first interface.
 
+Prototype Link: https://ayanvsingh.github.io/mandi-smart-inventory/
+
 ## How Mandi Works
 
 ### 1. Inventory Monitoring
